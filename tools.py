@@ -1,22 +1,16 @@
-import numpy
-import sympy
-import numpy as np
-from sympy import diff
 import math
+import numpy as np
+import sympy
+from sympy import diff
+from function import *
 
 
-def f(x):
-    # return x[0] ** 2 + x[1] ** 2
-    return (1 - x[0]) ** 2 + 100 * (x[1] ** 2 - 2 * (x[0] ** 2) * x[1] + x[0] ** 4)
-    # return x[0] ** 2 + 4 * x[0] + 6 * x[1] ** 2
-
-
-def count_grad(fun, point, x, y):
+def count_grad(point, x, y):
     diff_f_x = sympy.diff(fun, x)
     diff_f_y = sympy.diff(fun, y)
     f_x_point = diff_f_x.subs({x: point[0], y: point[1]})
     f_y_point = diff_f_y.subs({x: point[0], y: point[1]})
-    return numpy.array([f_x_point, f_y_point])
+    return np.array([f_x_point, f_y_point])
 
 
 def minus_vector(vector):
@@ -144,35 +138,3 @@ def norm(array):
 
 def get_lambda(x, s):
     return 0.1 * (norm(x) / norm(s))
-
-
-def dsk(point, interval, s):
-    a = interval[0]
-    xm = interval[1]
-    b = interval[2]
-    new_x_lambda = xm["lambda"] + (
-            ((f(a['value']) - f(b['value'])) * abs(xm['lambda'] - a["lambda"])) /
-            (2 * (f(a['value']) - 2 * f(xm['value']) + f(b['value']))))
-
-    new_x_value = get_x(point, s, new_x_lambda)
-    new_x = {'lambda': new_x_lambda, 'value': new_x_value}
-    a['f(x)'] = f(a['value'])
-    xm['f(x)'] = f(xm['value'])
-    b['f(x)'] = f(b['value'])
-    new_x['f(x)'] = f(new_x['value'])
-    return [a, xm, b, new_x]
-
-
-def dsk_powell(point, interval, s):
-    dsk_points = dsk(point, interval, s)
-    dsk_sorted_points = sorted(dsk_points, key=lambda value: value['lambda'])
-    sorted_points = dsk_sorted_points
-    new_array = sorted_points[1:]
-    a1 = (new_array[1]["f(x)"] - new_array[0]["f(x)"]) / (
-            new_array[1]["lambda"] - new_array[0]["lambda"])
-    a2 = (((new_array[2]["f(x)"] - new_array[0]["f(x)"]) / (
-            new_array[2]["lambda"] - new_array[0]["lambda"])) - a1) / (
-                 new_array[2]["lambda"] - new_array[1]["lambda"])
-    new_x_lambda = (new_array[0]["lambda"] + new_array[1]["lambda"]) / 2 - (a1 / (2 * a2))
-    new_x_value = get_x(point, s, new_x_lambda)
-    return {'lambda': new_x_lambda, 'value': new_x_value, 'f(x)': f(new_x_value)}
