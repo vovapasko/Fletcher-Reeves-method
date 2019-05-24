@@ -43,7 +43,7 @@ def find_hessian(fun, x0, x, y):
 
 
 def normalize(vector):
-    return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+    return vector / norm(vector)
 
 
 def sven(x, s):
