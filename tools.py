@@ -43,6 +43,8 @@ def find_hessian(fun, x0, x, y):
 
 
 def normalize(vector):
+    a1 = norm(vector)
+    res = vector / norm(vector)
     return vector / norm(vector)
 
 
