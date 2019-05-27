@@ -15,8 +15,8 @@ x02 = numpy.array([-1.2, 0.0])
 f3 = (10 * (x - y) ** 2 + (x - 1) ** 2) ** (1 / 4)
 x03 = numpy.array([-1.2, 0.0])
 
-fun = f1
-x0 = x01
+fun = f_test
+x0 = point_test
 
 
 def f(point):

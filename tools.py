@@ -140,3 +140,66 @@ def norm(array):
 
 def get_lambda(x, s):
     return 0.1 * (norm(x) / norm(s))
+
+
+def dsk(point, interval, s):
+    a = interval[0]
+    xm = interval[1]
+    b = interval[2]
+    new_x_lambda = xm["lambda"] + (
+            ((f(a['value']) - f(b['value'])) * abs(xm['lambda'] - a["lambda"])) /
+            (2 * (f(a['value']) - 2 * f(xm['value']) + f(b['value']))))
+
+    new_x_value = get_x(point, s, new_x_lambda)
+    new_x = {'lambda': new_x_lambda, 'value': new_x_value}
+    a['f(x)'] = f(a['value'])
+    xm['f(x)'] = f(xm['value'])
+    b['f(x)'] = f(b['value'])
+    new_x['f(x)'] = f(new_x['value'])
+    return [a, xm, b, new_x]
+
+
+def dsk_powell(point, interval, s):
+    dsk_points = dsk(point, interval, s)
+    dsk_sorted_points = sorted(dsk_points, key=lambda value: value['lambda'])
+    sorted_points = dsk_sorted_points
+    new_array = sorted_points[1:]
+    min_point = new_array[0]
+    a1 = (new_array[1]["f(x)"] - new_array[0]["f(x)"]) / (
+            new_array[1]["lambda"] - new_array[0]["lambda"])
+    a2 = (((new_array[2]["f(x)"] - new_array[0]["f(x)"]) / (
+            new_array[2]["lambda"] - new_array[0]["lambda"])) - a1) / (
+                 new_array[2]["lambda"] - new_array[1]["lambda"])
+    new_x_lambda = (new_array[0]["lambda"] + new_array[1]["lambda"]) / 2 - (a1 / (2 * a2))
+    new_x_value = get_x(point, s, new_x_lambda)
+    return {'lambda': new_x_lambda, 'value': new_x_value, 'f(x)': f(new_x_value)}
+
+
+def golden_ratio(interval, s, epsilon):
+    a = interval[0]
+    b = interval[2]
+
+    x1_lambda = 0.382 * (b['lambda'] - a['lambda']) + a['lambda']
+    x1_value = a['value'] + numpy.array([0.382, 0.382]) * (b['lambda'] - a['lambda']) * s
+    x1 = {'lambda': x1_lambda, 'value': x1_value}
+    x2_lambda = 0.618 * (b['lambda'] - a['lambda']) + a['lambda']
+    x2_value = a['value'] + numpy.array([0.618, 0.618]) * (b['lambda'] - a['lambda']) * s
+    x2 = {'lambda': x2_lambda, 'value': x2_value}
+    while True:
+        L = b['lambda'] - a['lambda']
+        if math.fabs(L) < epsilon:
+            return x1
+        f_x1 = f(x1['value'])
+        f_x2 = f(x2['value'])
+        if f_x1 <= f_x2:
+            b = x2
+            x2 = x1
+            x1_lambda = 0.382 * (b['lambda'] - a['lambda']) + a['lambda']
+            x1_value = a['value'] + numpy.array([0.382, 0.382]) * (b['lambda'] - a['lambda']) * s
+            x1 = {'lambda': x1_lambda, 'value': x1_value}
+        else:
+            a = x1
+            x1 = x2
+            x2_lambda = 0.618 * (b['lambda'] - a['lambda']) + a['lambda']
+            x2_value = a['value'] + numpy.array([0.618, 0.618]) * (b['lambda'] - a['lambda']) * s
+            x2 = {'lambda': x2_lambda, 'value': x2_value}
