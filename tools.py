@@ -1,22 +1,23 @@
-import numpy
-import sympy
-import numpy as np
-from sympy import diff
 import math
+import numpy as np
+import sympy
+from sympy import diff
+from function import *
+import matplotlib.pyplot as plt
 
 
-def f(x):
-    # return x[0] ** 2 + x[1] ** 2
-    return (1 - x[0]) ** 2 + 100 * (x[1] ** 2 - 2 * (x[0] ** 2) * x[1] + x[0] ** 4)
-    # return x[0] ** 2 + 4 * x[0] + 6 * x[1] ** 2
+def draw_plot(values, min_point):
+    plt.plot([x[0] for x in values], [x[1] for x in values], 'b')
+    plt.plot(min_point[0], min_point[1], 'r-o')
+    plt.show()
 
 
-def count_grad(fun, point, x, y):
+def count_grad(point):
     diff_f_x = sympy.diff(fun, x)
     diff_f_y = sympy.diff(fun, y)
     f_x_point = diff_f_x.subs({x: point[0], y: point[1]})
     f_y_point = diff_f_y.subs({x: point[0], y: point[1]})
-    return numpy.array([f_x_point, f_y_point])
+    return np.array([f_x_point, f_y_point])
 
 
 def minus_vector(vector):
@@ -49,7 +50,9 @@ def find_hessian(fun, x0, x, y):
 
 
 def normalize(vector):
-    return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
+    a1 = norm(vector)
+    res = vector / norm(vector)
+    return vector / norm(vector)
 
 
 def sven(x, s):
@@ -65,8 +68,9 @@ def sven(x, s):
     fplus = f(x0_plus)
     fc += 1
     if fminus < fplus:
-        llambda = -llambda
-        x_values.append({'lambda': llambda, 'value': x0_minus})
+        return False
+        # llambda = -llambda
+        # x_values.append({'lambda': llambda, 'value': x0_minus})
     else:
         x_values.append({'lambda': llambda, 'value': x0_plus})
     while True:
@@ -143,7 +147,7 @@ def norm(array):
 
 
 def get_lambda(x, s):
-    return 0.1 * (norm(x) / norm(s))
+    return 0.00001 * (norm(x) / norm(s))
 
 
 def dsk(point, interval, s):
@@ -168,6 +172,7 @@ def dsk_powell(point, interval, s):
     dsk_sorted_points = sorted(dsk_points, key=lambda value: value['lambda'])
     sorted_points = dsk_sorted_points
     new_array = sorted_points[1:]
+    min_point = new_array[0]
     a1 = (new_array[1]["f(x)"] - new_array[0]["f(x)"]) / (
             new_array[1]["lambda"] - new_array[0]["lambda"])
     a2 = (((new_array[2]["f(x)"] - new_array[0]["f(x)"]) / (
@@ -176,3 +181,33 @@ def dsk_powell(point, interval, s):
     new_x_lambda = (new_array[0]["lambda"] + new_array[1]["lambda"]) / 2 - (a1 / (2 * a2))
     new_x_value = get_x(point, s, new_x_lambda)
     return {'lambda': new_x_lambda, 'value': new_x_value, 'f(x)': f(new_x_value)}
+
+
+def golden_ratio(interval, s, epsilon):
+    a = interval[0]
+    b = interval[2]
+
+    x1_lambda = 0.382 * (b['lambda'] - a['lambda']) + a['lambda']
+    x1_value = a['value'] + numpy.array([0.382, 0.382]) * (b['lambda'] - a['lambda']) * s
+    x1 = {'lambda': x1_lambda, 'value': x1_value}
+    x2_lambda = 0.618 * (b['lambda'] - a['lambda']) + a['lambda']
+    x2_value = a['value'] + numpy.array([0.618, 0.618]) * (b['lambda'] - a['lambda']) * s
+    x2 = {'lambda': x2_lambda, 'value': x2_value}
+    while True:
+        L = b['lambda'] - a['lambda']
+        if math.fabs(L) < epsilon:
+            return x1
+        f_x1 = f(x1['value'])
+        f_x2 = f(x2['value'])
+        if f_x1 <= f_x2:
+            b = x2
+            x2 = x1
+            x1_lambda = 0.382 * (b['lambda'] - a['lambda']) + a['lambda']
+            x1_value = a['value'] + numpy.array([0.382, 0.382]) * (b['lambda'] - a['lambda']) * s
+            x1 = {'lambda': x1_lambda, 'value': x1_value}
+        else:
+            a = x1
+            x1 = x2
+            x2_lambda = 0.618 * (b['lambda'] - a['lambda']) + a['lambda']
+            x2_value = a['value'] + numpy.array([0.618, 0.618]) * (b['lambda'] - a['lambda']) * s
+            x2 = {'lambda': x2_lambda, 'value': x2_value}
