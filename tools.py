@@ -3,9 +3,16 @@ import numpy as np
 import sympy
 from sympy import diff
 from function import *
+import matplotlib.pyplot as plt
 
 
-def count_grad(point, x, y):
+def draw_plot(values, min_point):
+    plt.plot([x[0] for x in values], [x[1] for x in values], 'b')
+    plt.plot(min_point[0], min_point[1], 'r-o')
+    plt.show()
+
+
+def count_grad(point):
     diff_f_x = sympy.diff(fun, x)
     diff_f_y = sympy.diff(fun, y)
     f_x_point = diff_f_x.subs({x: point[0], y: point[1]})
@@ -61,8 +68,9 @@ def sven(x, s):
     fplus = f(x0_plus)
     fc += 1
     if fminus < fplus:
-        llambda = -llambda
-        x_values.append({'lambda': llambda, 'value': x0_minus})
+        return False
+        # llambda = -llambda
+        # x_values.append({'lambda': llambda, 'value': x0_minus})
     else:
         x_values.append({'lambda': llambda, 'value': x0_plus})
     while True:
@@ -139,7 +147,7 @@ def norm(array):
 
 
 def get_lambda(x, s):
-    return 0.1 * (norm(x) / norm(s))
+    return 0.00001 * (norm(x) / norm(s))
 
 
 def dsk(point, interval, s):
