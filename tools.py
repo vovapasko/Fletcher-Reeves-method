@@ -6,7 +6,8 @@ from function import *
 import matplotlib.pyplot as plt
 
 
-def draw_plot(values, min_point):
+def draw_plot(title_function,values, min_point):
+    plt.title(title_function)
     plt.plot([x[0] for x in values], [x[1] for x in values], 'b')
     plt.plot(min_point[0], min_point[1], 'r-o')
     plt.show()
@@ -55,7 +56,7 @@ def normalize(vector):
     return vector / norm(vector)
 
 
-def sven(x, s):
+def sven(par_function, x, s):
     llambda = get_lambda(x, s)
     x0_minus = get_x(x, s, -llambda)
     x0_plus = get_x(x, s, llambda)
@@ -63,9 +64,9 @@ def sven(x, s):
     i = 0
     fc = 0
     x_values = []
-    fminus = f(x0_minus)
+    fminus = f(par_function, x0_minus)
     fc += 1
-    fplus = f(x0_plus)
+    fplus = f(par_function, x0_plus)
     fc += 1
     if fminus < fplus:
         return False
@@ -76,9 +77,9 @@ def sven(x, s):
     while True:
         new_lambda = x_values[i]['lambda'] + (2 ** k) * llambda
         xk_next = get_x(x, s, new_lambda)
-        fk = f(x_values[i]['value'])
+        fk = f(par_function, x_values[i]['value'])
         fc += 1
-        fk_next = f(xk_next)
+        fk_next = f(par_function, xk_next)
         fc += 1
         x_values.append({'lambda': new_lambda, 'value': xk_next})
         if fk_next > fk and len(x_values) == 2:
@@ -102,7 +103,7 @@ def sven(x, s):
             i += 1
 
 
-def dichotomy(point, interval, s, epsilon):
+def dichotomy(par_function, point, interval, s, epsilon):
     a = interval[0]
     x_m = interval[1]
     b = interval[2]
@@ -119,9 +120,9 @@ def dichotomy(point, interval, s, epsilon):
         new_x2_lambda = b_lambda - L / 4
         new_x1_value = get_x(point, s, new_x1_lambda)
         new_x2_value = get_x(point, s, new_x2_lambda)
-        f_x1 = f(new_x1_value)
-        f_xm = f(x_m['value'])
-        f_x2 = f(new_x2_value)
+        f_x1 = f(par_function, new_x1_value)
+        f_xm = f(par_function, x_m['value'])
+        f_x2 = f(par_function, new_x2_value)
         fc += 3
         new_x1 = {'lambda': new_x1_lambda, 'value': new_x1_value}
         new_x2 = {'lambda': new_x2_lambda, 'value': new_x2_value}
@@ -150,40 +151,7 @@ def get_lambda(x, s):
     return 0.00001 * (norm(x) / norm(s))
 
 
-def dsk(point, interval, s):
-    a = interval[0]
-    xm = interval[1]
-    b = interval[2]
-    new_x_lambda = xm["lambda"] + (
-            ((f(a['value']) - f(b['value'])) * abs(xm['lambda'] - a["lambda"])) /
-            (2 * (f(a['value']) - 2 * f(xm['value']) + f(b['value']))))
-
-    new_x_value = get_x(point, s, new_x_lambda)
-    new_x = {'lambda': new_x_lambda, 'value': new_x_value}
-    a['f(x)'] = f(a['value'])
-    xm['f(x)'] = f(xm['value'])
-    b['f(x)'] = f(b['value'])
-    new_x['f(x)'] = f(new_x['value'])
-    return [a, xm, b, new_x]
-
-
-def dsk_powell(point, interval, s):
-    dsk_points = dsk(point, interval, s)
-    dsk_sorted_points = sorted(dsk_points, key=lambda value: value['lambda'])
-    sorted_points = dsk_sorted_points
-    new_array = sorted_points[1:]
-    min_point = new_array[0]
-    a1 = (new_array[1]["f(x)"] - new_array[0]["f(x)"]) / (
-            new_array[1]["lambda"] - new_array[0]["lambda"])
-    a2 = (((new_array[2]["f(x)"] - new_array[0]["f(x)"]) / (
-            new_array[2]["lambda"] - new_array[0]["lambda"])) - a1) / (
-                 new_array[2]["lambda"] - new_array[1]["lambda"])
-    new_x_lambda = (new_array[0]["lambda"] + new_array[1]["lambda"]) / 2 - (a1 / (2 * a2))
-    new_x_value = get_x(point, s, new_x_lambda)
-    return {'lambda': new_x_lambda, 'value': new_x_value, 'f(x)': f(new_x_value)}
-
-
-def golden_ratio(interval, s, epsilon):
+def golden_ratio(par_function, interval, s, epsilon):
     a = interval[0]
     b = interval[2]
 
@@ -197,8 +165,8 @@ def golden_ratio(interval, s, epsilon):
         L = b['lambda'] - a['lambda']
         if math.fabs(L) < epsilon:
             return x1
-        f_x1 = f(x1['value'])
-        f_x2 = f(x2['value'])
+        f_x1 = f(par_function, x1['value'])
+        f_x2 = f(par_function, x2['value'])
         if f_x1 <= f_x2:
             b = x2
             x2 = x1
