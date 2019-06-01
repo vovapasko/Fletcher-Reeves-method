@@ -4,7 +4,7 @@ from tools import *
 from function import *
 
 
-def start(function, start_point):
+def start(function, start_point, draw=True, real_point=real_min_point):
     epsilon = 0.001
     epsilon_dich = 0.0001
     s0 = -(count_grad(function, start_point))
@@ -70,6 +70,7 @@ def start(function, start_point):
 
     print("(x, y) = ", x_values[-1])
     print("f(x, y) =", f(function, x_values[-1]))
-    draw_plot(function, x_values, real_min_point)
-
+    if draw:
+        draw_plot(function, x_values, real_point)
+    return x_values[-1]
 

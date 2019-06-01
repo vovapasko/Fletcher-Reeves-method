@@ -19,6 +19,11 @@ f2 = ((10 * (x - y)) ** 2 + (x - 1) ** 2) ** 4
 x02 = numpy.array([-1.2, 0.0])
 real_minx02 = [1, 1]
 
-fun = f1
-x0 = x01
-real_min_point = real_minx01
+f3 = x ** 2 + 6*x + y ** 2 + 9 * y + 1/x + 1/y
+x03 = numpy.array([1, 0.5])
+real_minx03 = [0.38, 0.325]
+
+
+fun = f3
+x0 = x03
+real_min_point = real_minx03
