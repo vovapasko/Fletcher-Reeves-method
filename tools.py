@@ -6,7 +6,7 @@ from function import *
 import matplotlib.pyplot as plt
 
 
-def draw_plot(title_function,values, min_point):
+def draw_plot(title_function, values, min_point):
     plt.title(title_function)
     plt.plot([x[0] for x in values], [x[1] for x in values], 'b')
     plt.plot(min_point[0], min_point[1], 'r-o')
@@ -19,9 +19,6 @@ def count_grad(given_fun, point):
     f_x_point = diff_f_x.subs({x: point[0], y: point[1]})
     f_y_point = diff_f_y.subs({x: point[0], y: point[1]})
     return np.array([f_x_point, f_y_point])
-
-
-
 
 
 def normalize(vector):

@@ -24,6 +24,6 @@ x03 = numpy.array([1, 0.5])
 real_minx03 = [0.38, 0.325]
 
 
-fun = f3
+fun = f1
 x0 = x03
-real_min_point = real_minx03
+real_min_point = real_minx01

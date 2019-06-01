@@ -4,7 +4,7 @@ from tools import *
 from function import *
 
 
-def start(function, start_point, draw=True, real_point=real_min_point):
+def start(function, start_point, draw=True, real_point=real_min_point, print_output=False):
     epsilon = 0.001
     epsilon_dich = 0.0001
     s0 = -(count_grad(function, start_point))
@@ -42,8 +42,9 @@ def start(function, start_point, draw=True, real_point=real_min_point):
 
     while True:
         print("i = ", i)
-        print("(x, y) = ", x_values[i])
-        print("f(x, y) =", fun_values[i])
+        if print_output:
+            print("(x, y) = ", x_values[i])
+            print("f(x, y) =", fun_values[i])
         point = get_point()
         if point == False:
             s[-1] = -count_grad(function, x_values[-1])
@@ -62,15 +63,15 @@ def start(function, start_point, draw=True, real_point=real_min_point):
         # new_s1 = normalize(new_s)
         s.append(new_s)
         if norm_grad_criterion(epsilon):
-            print("Search is finished")
+            if print_output:
+                print("Search is finished")
             break
 
         i += 1
         print("-------------------")
-
-    print("(x, y) = ", x_values[-1])
-    print("f(x, y) =", f(function, x_values[-1]))
+    if print_output:
+        print("(x, y) = ", x_values[-1])
+        print("f(x, y) =", f(function, x_values[-1]))
     if draw:
         draw_plot(function, x_values, real_point)
     return x_values[-1]
-
