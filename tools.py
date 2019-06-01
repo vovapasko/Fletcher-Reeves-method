@@ -13,41 +13,15 @@ def draw_plot(title_function,values, min_point):
     plt.show()
 
 
-def count_grad(point):
-    diff_f_x = sympy.diff(fun, x)
-    diff_f_y = sympy.diff(fun, y)
+def count_grad(given_fun, point):
+    diff_f_x = sympy.diff(given_fun, x)
+    diff_f_y = sympy.diff(given_fun, y)
     f_x_point = diff_f_x.subs({x: point[0], y: point[1]})
     f_y_point = diff_f_y.subs({x: point[0], y: point[1]})
     return np.array([f_x_point, f_y_point])
 
 
-def minus_vector(vector):
-    return [-x for x in vector]
 
-
-def transpose(matrix):
-    arr = np.array(matrix)[np.newaxis]
-    return arr.T
-
-
-def find_hessian(fun, x0, x, y):
-    print("---------------")
-    print("Counting hessian")
-    print(fun)
-    print(x0)
-    f_xx = sympy.diff(fun, x, 2)
-    print("diff(f, x, 2) =", f_xx)
-    f_xy = diff(diff(fun, x), y)
-    print("diff(f, (x,y), 2) =", f_xy)
-    f_yy = diff(fun, y, 2)
-    print("diff(f, y, 2) =", f_yy)
-    hess = [
-        [f_xx.subs({x: x0[0], y: x0[1]}), f_xy.subs({x: x0[0], y: x0[1]})],
-        [f_xy.subs({x: x0[0], y: x0[1]}), f_yy.subs({x: x0[0], y: x0[1]})]
-    ]
-    print(hess)
-    print("---------------")
-    return hess
 
 
 def normalize(vector):

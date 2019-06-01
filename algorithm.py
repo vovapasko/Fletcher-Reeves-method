@@ -7,7 +7,7 @@ from function import *
 def start(function, start_point):
     epsilon = 0.001
     epsilon_dich = 0.0001
-    s0 = -(count_grad(start_point))
+    s0 = -(count_grad(function, start_point))
     s = [s0]
     x_values = [start_point]
     i = 0
@@ -15,8 +15,8 @@ def start(function, start_point):
     min_vector_grad = []
 
     def get_gamma():
-        b = (norm(count_grad(x_values[i + 1]))) ** 2
-        c = (norm(count_grad(x_values[i]))) ** 2
+        b = (norm(count_grad(function, x_values[i + 1]))) ** 2
+        c = (norm(count_grad(function, x_values[i]))) ** 2
         gamma = b / c
         return gamma
 
@@ -35,7 +35,7 @@ def start(function, start_point):
         return False
 
     def norm_grad_criterion(par_epsilon):
-        norm_gradient = norm(count_grad(x_values[i]))
+        norm_gradient = norm(count_grad(function, x_values[i]))
         if norm_gradient <= par_epsilon:
             return True
         return False
@@ -46,14 +46,14 @@ def start(function, start_point):
         print("f(x, y) =", fun_values[i])
         point = get_point()
         if point == False:
-            s[-1] = -count_grad(x_values[-1])
+            s[-1] = -count_grad(function, x_values[-1])
             continue
         llambda = point['lambda']
         new_x = x_values[i] + llambda * s[i]
         x_values.append(new_x)
         fun_values.append(f(function, x_values[i]))
 
-        minus_grad = -count_grad(x_values[i + 1])
+        minus_grad = -count_grad(function, x_values[i + 1])
         min_vector_grad.append(minus_grad)
         gamma = get_gamma()
         s_gamma_product = s[i] * gamma
